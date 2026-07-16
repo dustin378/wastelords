@@ -54,7 +54,7 @@ async function tickGame(code: string) {
       if (game.status !== "active" || player.eliminated) { item.sent = "stale"; continue; }
       const submitted = Boolean(drafts[player.id]?.length);
       const laggards = game.players
-        .filter((p: any) => !p.eliminated && !(drafts[p.id]?.length))
+        .filter((p: any) => !p.eliminated && !p.isBot && !(drafts[p.id]?.length))
         .map((p: any) => p.clanName);
       subject = submitted
         ? `WASTELORDS — orders filed. Others are silent.`

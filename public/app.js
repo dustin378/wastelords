@@ -187,7 +187,8 @@ function renderLobby() {
     <p><span class="code-badge">${esc(S.code)}</span></p>
     <div id="lobby-list"></div>
     ${S.you.isMaster ? `<button id="btn-start">Open the season</button>
-      <div class="order-hint" style="margin-top:8px">Starting locks the ledger and deals every clan a stronghold. First resolution: next Monday 8:00 AM Central.</div>` : `<p class="order-hint">Waiting on the Overseer's word.</p>`}
+      <button class="ghost" id="btn-bot" style="margin-left:10px">Hire a raider clan (AI)</button>
+      <div class="order-hint" style="margin-top:8px">Starting locks the ledger and deals every clan a stronghold. Raider clans are AI-run — they expand, scheme, and leak intel like anyone else.</div>` : `<p class="order-hint">Waiting on the Overseer's word.</p>`}
     <div class="error" id="game-err"></div>
   </div>`;
   $("#lobby-list").innerHTML = S.players.map((p) => `
@@ -195,11 +196,18 @@ function renderLobby() {
       <span class="sw" style="background:${esc(p.colorHex)}"></span>
       <span class="nm">${esc(p.clanName)}</span>
       ${p.isMaster ? '<span class="stencil" style="font-size:11px;color:var(--oxide-deep)">OVERSEER</span>' : ""}
+      ${p.isBot ? '<span class="stencil" style="font-size:11px;color:var(--ink-soft)">RAIDER AI</span>' : ""}
     </div>`).join("");
-  if (S.you.isMaster) $("#btn-start").onclick = async () => {
-    try { await api("start", { code: S.code, token: session.token }); refresh(); }
-    catch (ex) { $("#game-err").textContent = ex.message; }
-  };
+  if (S.you.isMaster) {
+    $("#btn-start").onclick = async () => {
+      try { await api("start", { code: S.code, token: session.token }); refresh(); }
+      catch (ex) { $("#game-err").textContent = ex.message; }
+    };
+    $("#btn-bot").onclick = async () => {
+      try { await api("addbot", { code: S.code, token: session.token }); refresh(); }
+      catch (ex) { $("#game-err").textContent = ex.message; }
+    };
+  }
 }
 
 /* ---------- active game ---------- */
@@ -249,7 +257,7 @@ function renderActive() {
             <span class="sw" style="background:${esc(p.colorHex)}"></span>
             <span class="nm">${p.rank}. ${esc(p.clanName)}</span>
             <span class="mono">${p.territories}t/${p.units}w</span>
-            ${finished || p.eliminated ? "" : (p.submitted ? '<span class="filed">FILED</span>' : '<span class="silent">SILENT</span>')}
+            ${finished || p.eliminated ? "" : p.isBot ? '<span class="filed" style="color:var(--ink-soft)">RAIDER</span>' : (p.submitted ? '<span class="filed">FILED</span>' : '<span class="silent">SILENT</span>')}
           </div>`).join("")}
       </div>
       <div class="panel">

@@ -4,6 +4,7 @@ import { getGame, putGame, addToIndex, putOrders, getOrders, getAllOrders } from
 import { runResolution, standingsOf, log, fmtDeadline } from "../../lib/run.mjs";
 import { sendEmail, emailEnabled, renderWelcome } from "../../lib/email.mjs";
 import { CLAN_COLORS } from "../../lib/engine.mjs";
+import { BOT_CLANS } from "../../lib/bots.mjs";
 
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json" } });
@@ -45,6 +46,7 @@ export default async (req: Request) => {
         case "orders": return await submitOrders(body);
         case "start": return await start(body);
         case "resolve": return await forceResolve(body);
+        case "addbot": return await addBot(body);
       }
     }
     return err("not found", 404);
@@ -124,6 +126,28 @@ async function login(b: any) {
   return json({ code, token: player.token, pid: player.id });
 }
 
+async function addBot(b: any) {
+  const game: any = await getGame(clean(b.code, 12).toUpperCase());
+  if (!game) return err("no game under that code");
+  const me = findPlayer(game, clean(b.token, 40));
+  if (!me?.isMaster) return err("only the Overseer can hire raiders", 403);
+  if (game.status !== "recruiting") return err("the ledger is closed");
+  if (game.players.length >= game.settings.maxPlayers) return err("the ledger is full (8 clans)");
+  const taken = new Set(game.players.map((p: any) => p.clanName));
+  const pick = BOT_CLANS.find((c) => !taken.has(c.clanName));
+  if (!pick) return err("no raider clans left to hire");
+  const color = CLAN_COLORS[game.players.length];
+  game.players.push({
+    id: crypto.randomUUID(), token: null,
+    name: pick.name, clanName: pick.clanName, email: null, pinHash: null,
+    color: color.key, colorHex: color.hex, colorLabel: color.label,
+    isMaster: false, isBot: true, eliminated: false, capital: null, joinedAt: new Date().toISOString()
+  });
+  log(game, "system", `${pick.clanName} answered the signal fire. Nobody remembers inviting them.`);
+  await putGame(game);
+  return json({ ok: true, clanName: pick.clanName });
+}
+
 async function start(b: any) {
   const game: any = await getGame(clean(b.code, 12).toUpperCase());
   if (!game) return err("no game under that code");
@@ -167,7 +191,7 @@ async function submitOrders(b: any) {
 
   // blitz pace: the turn resolves the moment every living clan has filed
   if (game.settings.pace === "blitz") {
-    const alive = game.players.filter((p: any) => !p.eliminated);
+    const alive = game.players.filter((p: any) => !p.eliminated && !p.isBot);
     const all = await getAllOrders(game.code, game.turn + 1, alive.map((p: any) => p.id));
     if (alive.every((p: any) => all[p.id]?.length)) {
       const report = await runResolution(game);
@@ -202,7 +226,7 @@ async function getState(url: URL) {
   const submittedBy: Record<string, boolean> = {};
   if (game.status === "active") {
     const all = await getAllOrders(game.code, upcoming, game.players.map((p: any) => p.id));
-    for (const p of game.players) submittedBy[p.id] = Boolean(all[p.id]?.length);
+    for (const p of game.players) submittedBy[p.id] = p.isBot ? true : Boolean(all[p.id]?.length);
   }
 
   const territories: Record<string, any> = {};
@@ -233,6 +257,7 @@ async function getState(url: URL) {
     players: standingsOf(game).map((s) => ({
       ...s, colorHex: game.players.find((p: any) => p.id === s.pid)?.colorHex,
       isMaster: game.players.find((p: any) => p.id === s.pid)?.isMaster || false,
+      isBot: game.players.find((p: any) => p.id === s.pid)?.isBot || false,
       submitted: submittedBy[s.pid] || false
     })),
     territories,
