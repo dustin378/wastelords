@@ -1,0 +1,10 @@
+[build]
+  publish = "public"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# belt-and-suspenders with the in-code schedule config
+[functions."tick"]
+  schedule = "@hourly"

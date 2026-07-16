@@ -1,0 +1,23 @@
+{
+  "name": "wastelords",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@netlify/blobs": "^10.7.9",
+    "d3-delaunay": "^6.0.4"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^5.3.0",
+    "playwright-core": "^1.61.1"
+  }
+}

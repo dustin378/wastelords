@@ -1,0 +1,145 @@
+/* WASTELORDS — a scavenged field map annotated in grease pencil and rust. */
+@import url('https://fonts.googleapis.com/css2?family=Staatliches&family=Special+Elite&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+:root {
+  --paper: #d8cfba;
+  --paper-dark: #c9bda2;
+  --ink: #2b2721;
+  --ink-soft: #4a4237;
+  --oxide: #a03c28;
+  --oxide-deep: #7c2d1e;
+  --stamp: #8c2f1f;
+  --line: #8d8371;
+  --good: #3d6b5e;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--paper);
+  background-image:
+    radial-gradient(ellipse at 20% 10%, rgba(255,250,235,.45), transparent 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(120,95,60,.18), transparent 50%),
+    repeating-linear-gradient(2deg, transparent 0 3px, rgba(90,75,50,.025) 3px 4px);
+  color: var(--ink);
+  font-family: 'Special Elite', 'Courier New', monospace;
+  min-height: 100vh;
+}
+
+h1, h2, h3, .stencil {
+  font-family: 'Staatliches', 'Arial Narrow', sans-serif;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.mono { font-family: 'IBM Plex Mono', monospace; }
+
+#app { max-width: 1380px; margin: 0 auto; padding: 18px 22px 60px; }
+
+/* ---------- masthead ---------- */
+.masthead { display: flex; align-items: baseline; gap: 18px; border-bottom: 3px double var(--ink); padding-bottom: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+.masthead h1 { font-size: 46px; color: var(--ink); }
+.masthead h1 .x { color: var(--oxide); }
+.masthead .tagline { color: var(--ink-soft); font-size: 14px; }
+.masthead .spacer { flex: 1; }
+.masthead .who { font-size: 13px; color: var(--ink-soft); text-align: right; }
+
+/* ---------- landing ---------- */
+.landing { display: grid; grid-template-columns: 1.15fr .85fr; gap: 34px; align-items: start; }
+@media (max-width: 900px) { .landing { grid-template-columns: 1fr; } }
+.hero-art { width: 100%; border: 2px solid var(--ink); box-shadow: 6px 6px 0 rgba(43,39,33,.25); display: block; background: var(--paper-dark); min-height: 240px; object-fit: cover; }
+.landing .pitch { font-size: 15px; line-height: 1.65; margin-top: 14px; }
+.rules { margin-top: 14px; font-size: 13.5px; line-height: 1.6; color: var(--ink-soft); border-left: 4px solid var(--oxide); padding-left: 14px; }
+
+.panel { border: 2px solid var(--ink); background: rgba(255,252,242,.55); box-shadow: 5px 5px 0 rgba(43,39,33,.22); padding: 18px; margin-bottom: 20px; }
+.panel h2 { font-size: 22px; border-bottom: 2px solid var(--ink); padding-bottom: 6px; margin-bottom: 12px; color: var(--oxide-deep); }
+.panel label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); margin: 10px 0 3px; }
+.panel input {
+  width: 100%; padding: 9px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 14px;
+  border: 1.5px solid var(--ink); background: rgba(255,255,255,.6); color: var(--ink);
+}
+.panel input:focus { outline: 2px solid var(--oxide); }
+
+button {
+  font-family: 'Staatliches', sans-serif; letter-spacing: .08em; text-transform: uppercase;
+  font-size: 16px; padding: 10px 20px; cursor: pointer;
+  background: var(--oxide); color: #f3ead6; border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 rgba(43,39,33,.35); margin-top: 14px;
+}
+button:hover { background: var(--oxide-deep); }
+button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(43,39,33,.35); }
+button.ghost { background: transparent; color: var(--ink); }
+button.small { font-size: 13px; padding: 5px 12px; margin-top: 0; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+
+.error { color: var(--stamp); font-size: 13px; margin-top: 10px; min-height: 18px; }
+.notice { font-size: 13px; color: var(--good); margin-top: 10px; }
+
+.tabs { display: flex; gap: 0; margin-bottom: 14px; }
+.tabs button { flex: 1; margin: 0; box-shadow: none; background: transparent; color: var(--ink-soft); border: 2px solid var(--ink); border-bottom-width: 0; opacity: .65; }
+.tabs button.active { background: var(--oxide); color: #f3ead6; opacity: 1; }
+
+/* ---------- game layout ---------- */
+.game { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 20px; }
+@media (max-width: 1080px) { .game { grid-template-columns: 1fr; } }
+
+.strip { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; font-size: 13px; }
+.strip .chip { border: 1.5px solid var(--ink); padding: 4px 12px; background: rgba(255,252,242,.6); }
+.strip .chip b { color: var(--oxide-deep); }
+.countdown { font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: var(--oxide-deep); }
+
+.mapwrap { border: 2px solid var(--ink); background: var(--paper-dark); box-shadow: 6px 6px 0 rgba(43,39,33,.25); position: relative; }
+.mapwrap svg { display: block; width: 100%; height: auto; }
+.map-title { position: absolute; top: 10px; left: 14px; font-family: 'Staatliches'; font-size: 18px; letter-spacing: .1em; color: rgba(43,39,33,.55); pointer-events: none; }
+
+svg .terr { stroke: var(--ink); stroke-width: 1.6; cursor: pointer; transition: filter .12s; }
+svg .terr:hover { filter: brightness(1.12); }
+svg .terr.sel-src { stroke: #f3ead6; stroke-width: 3.5; filter: brightness(1.15); }
+svg .terr.sel-dst { stroke-dasharray: 7 4; stroke-width: 3; }
+svg .tname { font-family: 'Special Elite', monospace; font-size: 11.5px; fill: var(--ink); pointer-events: none; opacity: .85; }
+svg .tunits { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; pointer-events: none; }
+svg .ticon { font-size: 12px; pointer-events: none; }
+
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-top: 8px; color: var(--ink-soft); }
+.legend .sw { display: inline-block; width: 11px; height: 11px; border: 1px solid var(--ink); margin-right: 4px; vertical-align: -1px; }
+
+/* ---------- sidebar ---------- */
+.side .panel { margin-bottom: 16px; }
+.standing { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 13.5px; border-bottom: 1px dashed var(--line); }
+.standing:last-child { border-bottom: 0; }
+.standing .sw { width: 13px; height: 13px; border: 1.5px solid var(--ink); flex: none; }
+.standing .nm { flex: 1; }
+.standing .filed { font-size: 11px; color: var(--good); }
+.standing .silent { font-size: 11px; color: var(--stamp); }
+.standing.dead { opacity: .5; text-decoration: line-through; }
+
+.order-row { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(--ink); background: rgba(255,255,255,.45); padding: 7px 10px; margin-bottom: 7px; font-size: 13px; }
+.order-row .del { margin-left: auto; cursor: pointer; color: var(--stamp); font-weight: bold; font-family: 'IBM Plex Mono'; }
+.order-hint { font-size: 12.5px; color: var(--ink-soft); line-height: 1.55; }
+.order-builder { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.order-builder button { margin-top: 0; font-size: 13px; padding: 6px 10px; }
+.qty { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.qty input[type=range] { flex: 1; accent-color: var(--oxide); }
+
+.radio-log { max-height: 480px; overflow-y: auto; font-size: 13px; line-height: 1.5; }
+.radio-log .entry { padding: 7px 2px; border-bottom: 1px dashed var(--line); }
+.radio-log .entry .meta { font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); }
+.radio-log .entry.whisper .meta, .radio-log .entry.recon .meta { color: var(--oxide-deep); }
+.radio-log .entry.whisper { background: rgba(160,60,40,.06); }
+.radio-log .entry.victory { background: rgba(160,60,40,.12); font-weight: bold; }
+
+.stamp {
+  display: inline-block; border: 3px solid var(--stamp); color: var(--stamp); padding: 2px 12px;
+  font-family: 'Staatliches'; font-size: 20px; letter-spacing: .15em; transform: rotate(-4deg);
+  opacity: .85; text-transform: uppercase;
+}
+.code-badge { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 18px; letter-spacing: .12em; border: 2px dashed var(--ink); padding: 6px 14px; display: inline-block; background: rgba(255,255,255,.5); }
+
+.footer-note { margin-top: 26px; font-size: 12px; color: var(--ink-soft); border-top: 1px solid var(--line); padding-top: 10px; }
+.hidden { display: none !important; }
+
+/* pace picker */
+.pace-pick { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.pace-opt { display: block; border: 1.5px solid var(--ink); background: rgba(255,255,255,.45); padding: 8px 10px; font-size: 12.5px; line-height: 1.5; cursor: pointer; text-transform: none; letter-spacing: 0; color: var(--ink-soft); }
+.pace-opt b { color: var(--ink); }
+.pace-opt input { width: auto; margin-right: 7px; accent-color: var(--oxide); }
